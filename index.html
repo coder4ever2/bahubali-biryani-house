@@ -7,9 +7,62 @@
 <title>Bahubali Biryani House Downtown – Authentic Indian Cuisine Vancouver</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
-:root{--saffron:#E8691A;--gold:#D4921A;--herb:#2A7A3F;--mint:#3DB85C;--mint-glow:rgba(61,184,92,.15);--crimson:#8B1A1A;--bg-dark:#0B0604;--bg-card:#170A04;--bg-mid:#110704;--cream:#FFF5E6;--text-muted:#C4967A;--text-light:#F0D8C0;--border:rgba(212,146,26,.22);--glow:rgba(232,105,26,.14);}
+:root{
+  --saffron:#E8691A;--gold:#D4921A;--herb:#2A7A3F;--mint:#3DB85C;
+  --mint-glow:rgba(61,184,92,.15);--crimson:#8B1A1A;
+  --bg-dark:#0B0604;--bg-card:#170A04;--bg-mid:#110704;
+  --cream:#FFF5E6;--text-muted:#D4A87A;--text-light:#F0D8C0;
+  --border:rgba(212,146,26,.22);--glow:rgba(232,105,26,.14);
+  --chat-bg:linear-gradient(180deg,#1A0E06 0%,#100700 100%);
+  --chat-bubble-bot:rgba(255,255,255,.09);--chat-bubble-bot-border:rgba(212,146,26,.25);
+  --input-bg:rgba(255,255,255,.07);--modal-bg:#170A04;
+  --transition-theme:background .35s,color .35s,border-color .35s;
+}
+/* ── LIGHT MODE ── */
+body.light{
+  --bg-dark:#FFF8EF;--bg-card:#FFF2E0;--bg-mid:#FFF5E8;
+  --cream:#2C1505;--text-muted:#7A5030;--text-light:#4A2810;
+  --border:rgba(160,90,20,.2);--glow:rgba(232,105,26,.08);
+  --chat-bg:linear-gradient(180deg,#FFF2E0 0%,#FFECD0 100%);
+  --chat-bubble-bot:rgba(0,0,0,.05);--chat-bubble-bot-border:rgba(160,90,20,.2);
+  --input-bg:rgba(0,0,0,.04);--modal-bg:#FFF5E8;
+}
+body.light nav{background:linear-gradient(180deg,rgba(255,248,239,.98) 0%,transparent 100%)!important;}
+body.light nav.scrolled{background:rgba(255,248,239,.98)!important;border-bottom:1px solid rgba(160,90,20,.15);}
+body.light .nav-logo{color:var(--saffron);}
+body.light .nav-links a{color:var(--text-light);}
+body.light .hero-bg{background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(232,105,26,.12) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 75% 70%,rgba(212,146,26,.1) 0%,transparent 60%),#FFF8EF!important;}
+body.light .hero-title{color:#2C1505;}
+body.light .hero-desc{color:#5A3018;}
+body.light .about-img-inner{background:linear-gradient(135deg,#FFE8C8 0%,#FFF0DC 50%,#E8F5ED 100%);}
+body.light .menu-item{background:var(--bg-card);box-shadow:0 2px 12px rgba(0,0,0,.06);}
+body.light .item-desc{color:#7A5030;}
+body.light .review-card{background:var(--bg-card);border-color:rgba(160,90,20,.15);}
+body.light .modal{background:var(--modal-bg);}
+body.light .form-group input,body.light .form-group select,body.light .form-group textarea{background:rgba(0,0,0,.04);color:#2C1505;border-color:rgba(160,90,20,.2);}
+body.light #cart-bar{background:linear-gradient(135deg,#FFF2E0,#FFE8C8);border-color:var(--gold);}
+body.light #cart-bar .cart-label{color:#2C1505;}
+body.light .qo-card{background:linear-gradient(135deg,#FFF5E8,rgba(42,122,63,.06));}
+body.light .hours-row{border-bottom-color:rgba(0,0,0,.06);}
+body.light .hours-day{color:#7A5030;}body.light .hours-time{color:#2C1505;}
+body.light footer{background:#FFF2E0;border-top:1px solid rgba(160,90,20,.15);}
+body.light .footer-logo{color:var(--saffron);}
+body.light .footer-tagline,.footer-copy{color:#7A5030;}
+body.light #ai-chat-panel{background:var(--chat-bg);border-color:rgba(160,90,20,.25);}
+body.light .chat-header{background:linear-gradient(135deg,rgba(232,105,26,.1),rgba(212,146,26,.07));}
+body.light .msg.bot .msg-bubble{background:var(--chat-bubble-bot);border-color:var(--chat-bubble-bot-border);color:#2C1505;}
+body.light .msg.user .msg-bubble{background:linear-gradient(135deg,var(--saffron),var(--gold));color:#fff;}
+body.light #chat-input{background:var(--input-bg);color:#2C1505;border-color:rgba(160,90,20,.2);}
+body.light .quick-btn{border-color:rgba(160,90,20,.2);color:#7A5030;}
+body.light .quick-btn:hover{border-color:var(--saffron);color:var(--saffron);}
+body.light .specials-ticker{background:linear-gradient(135deg,rgba(42,122,63,.1),rgba(61,184,92,.04));}
+body.light .ticker-txt{color:#4A2810;}
+body.light .qmc-name{color:#2C1505;}
+body.light #ai-chat-btn{box-shadow:0 4px 22px rgba(232,105,26,.3);}
+body.light .spice-dot{background:rgba(0,0,0,.1);}
+body.light .item-name{color:#2C1505;}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
-body{background:var(--bg-dark);color:var(--cream);font-family:'Crimson Text',Georgia,serif;font-size:18px;overflow-x:hidden;}
+body{background:var(--bg-dark);color:var(--cream);font-family:'Crimson Text',Georgia,serif;font-size:18px;overflow-x:hidden;transition:var(--transition-theme);}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5;}
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem;background:linear-gradient(180deg,rgba(11,6,4,.97) 0%,transparent 100%);transition:background .4s;}
 nav.scrolled{background:rgba(8,4,2,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
@@ -231,6 +284,35 @@ footer{background:var(--bg-dark);border-top:1px solid var(--border);padding:2.8r
 #toast.show{transform:translateX(0);}
 @media(max-width:768px){nav{padding:1rem 1.2rem;}.nav-links{display:none;}section{padding:4rem 1.2rem;}.about-grid{grid-template-columns:1fr;}.info-grid{grid-template-columns:1fr;}.hero-stats{gap:2.3rem;}#ai-chat-panel{width:calc(100vw - 2rem);right:1rem;bottom:6.2rem;}.form-row{grid-template-columns:1fr;}#cart-bar{width:calc(100% - 2rem);}}
 @media(max-width:480px){.hero-title{font-size:2.65rem;}.hero-stats{display:none;}}
+/* ── CHAT MINIMIZED STATE ── */
+#ai-chat-panel.minimized{max-height:52px;overflow:hidden;opacity:.9;cursor:pointer;}
+#ai-chat-panel.minimized .chat-tabs,#ai-chat-panel.minimized .specials-ticker,
+#ai-chat-panel.minimized #tab-chat,#ai-chat-panel.minimized #tab-voice,
+#ai-chat-panel.minimized #tab-order{display:none!important;}
+#ai-chat-panel.minimized .chat-header{border-bottom:none;cursor:pointer;}
+.chat-mini-hint{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.1em;color:var(--mint);text-transform:uppercase;margin-left:auto;margin-right:.5rem;opacity:.9;white-space:nowrap;}
+/* ── THEME TOGGLE ── */
+#theme-toggle{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.02rem;transition:all .25s;border-radius:50%;flex-shrink:0;}
+#theme-toggle:hover{border-color:var(--gold);color:var(--gold);}
+body.light #theme-toggle{border-color:rgba(160,90,20,.25);color:#7A5030;}
+/* ── ACCESSIBILITY — larger, higher-contrast fonts ── */
+.msg-bubble{font-size:1.01rem!important;line-height:1.62!important;}
+.msg-time{font-size:.74rem!important;color:var(--text-muted);}
+.chat-name{font-size:.84rem!important;}
+.chat-status{font-size:.75rem!important;}
+.quick-btn{font-size:.92rem!important;padding:.3rem .72rem!important;}
+.item-desc{font-size:.96rem!important;color:var(--text-muted);}
+.section-desc{font-size:1.06rem!important;}
+.feat-label{font-size:.66rem!important;}
+.section-eyebrow{font-size:.7rem!important;}
+.qo-card-cat{font-size:.62rem!important;}
+.qmc-name{font-size:.98rem!important;}
+.qo-sug-name{font-size:1.01rem!important;}
+.hours-day,.hours-time,.info-line{font-size:1.02rem!important;}
+.cart-item-name{font-size:1.07rem!important;}
+.form-group label{font-size:.65rem!important;}
+.form-group input,.form-group select,.form-group textarea{font-size:1.01rem!important;}
+.chat-tab{font-size:.6rem!important;}
 </style>
 </head>
 <body>
@@ -246,6 +328,7 @@ footer{background:var(--bg-dark);border-top:1px solid var(--border);padding:2.8r
     <li><a href="#info">Contact</a></li>
   </ul>
   <button class="nav-order-btn" onclick="openCart()">🛒 Order Now</button>
+  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
 </nav>
 
 <section id="hero">
@@ -432,6 +515,7 @@ footer{background:var(--bg-dark);border-top:1px solid var(--border);padding:2.8r
   <div class="chat-header">
     <div class="chat-avatar">🍛</div>
     <div style="flex:1;"><div class="chat-name">Bahubali AI Waiter</div><div class="chat-status"><span class="status-dot"></span>Online · Ready to take your order</div></div>
+    <span class="chat-mini-hint" id="mini-hint" style="display:none;">tap to expand</span>
     <button onclick="toggleChat()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.05rem;">✕</button>
   </div>
   <div class="specials-ticker">
@@ -739,9 +823,72 @@ function renderChatOrderList(items){
 renderChatOrderList();
 function filterChatOrder(val){const q=val.trim().toLowerCase();if(!q){renderChatOrderList();return;}const m=allItems.filter(i=>i.name.toLowerCase().includes(q)||i.category.toLowerCase().includes(q));renderChatOrderList(m.length?m:null);}
 
+// ── MENU & CART FUNCTIONS ABOVE, CHAT BELOW ──
+
 // CHAT
 let chatOpen=false;let chatHistory=[];
-function toggleChat(){chatOpen=!chatOpen;document.getElementById('ai-chat-panel').classList.toggle('open',chatOpen);if(chatOpen&&document.getElementById('chat-messages').children.length===0)initChat();}
+let chatMinimized=false;
+let minimizeTimer=null;
+const MINIMIZE_DELAY=4500; // ms of inactivity before auto-minimize
+
+function toggleChat(){
+  if(chatMinimized){unminimizeChat();return;}
+  chatOpen=!chatOpen;
+  document.getElementById('ai-chat-panel').classList.toggle('open',chatOpen);
+  if(chatOpen&&document.getElementById('chat-messages').children.length===0)initChat();
+  if(chatOpen)resetMinimizeTimer();
+}
+
+function minimizeChat(){
+  if(!chatOpen||chatMinimized)return;
+  chatMinimized=true;
+  document.getElementById('ai-chat-panel').classList.add('minimized');
+  document.getElementById('mini-hint').style.display='inline';
+  clearTimeout(minimizeTimer);
+}
+function unminimizeChat(){
+  chatMinimized=false;
+  document.getElementById('ai-chat-panel').classList.remove('minimized');
+  document.getElementById('mini-hint').style.display='none';
+  resetMinimizeTimer();
+  setTimeout(scrollChat,80);
+}
+function resetMinimizeTimer(){
+  clearTimeout(minimizeTimer);
+  minimizeTimer=setTimeout(minimizeChat, MINIMIZE_DELAY);
+}
+// Clicking the minimized header re-opens
+document.getElementById('ai-chat-panel').addEventListener('click',function(e){
+  if(chatMinimized){unminimizeChat();e.stopPropagation();}
+});
+// Auto-minimize when user clicks elsewhere on the page
+document.addEventListener('click',function(e){
+  const panel=document.getElementById('ai-chat-panel');
+  const btn=document.getElementById('ai-chat-btn');
+  if(chatOpen&&!chatMinimized&&!panel.contains(e.target)&&!btn.contains(e.target)){
+    minimizeChat();
+  }
+});
+// Auto-minimize on scroll (after a brief pause)
+let scrollDebounce;
+window.addEventListener('scroll',function(){
+  clearTimeout(scrollDebounce);
+  scrollDebounce=setTimeout(()=>{if(chatOpen&&!chatMinimized)minimizeChat();},600);
+  document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>80);
+});
+// Keep timer alive while user types in chat
+document.getElementById('chat-input').addEventListener('input',resetMinimizeTimer);
+
+// ── THEME TOGGLE ──
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light');
+  document.getElementById('theme-toggle').textContent=isLight?'🌙':'☀️';
+  try{localStorage.setItem('theme',isLight?'light':'dark');}catch(e){}
+}
+(function initTheme(){
+  try{if(localStorage.getItem('theme')==='light'){document.body.classList.add('light');document.getElementById('theme-toggle').textContent='🌙';}}catch(e){}
+})();
+
 function initChat(){
   const h=new Date().getHours();
   const isLunch=h>=11&&h<15;
@@ -756,14 +903,35 @@ function switchTab(tab,btn){
   document.getElementById('tab-chat').style.flexDirection='column';
   document.getElementById('tab-voice').style.display=tab==='voice'?'block':'none';
   document.getElementById('tab-order').style.display=tab==='order'?'block':'none';
+  resetMinimizeTimer();
 }
-function scrollChat(){const m=document.getElementById('chat-messages');m.scrollTo({top:m.scrollHeight,behavior:'smooth'});}
+
+// ── SMOOTH EASED SCROLL (replaces native behavior:'smooth' which is too fast) ──
+function scrollChat(){
+  const el=document.getElementById('chat-messages');
+  const start=el.scrollTop;
+  const end=el.scrollHeight-el.clientHeight;
+  if(end<=start)return;
+  const dist=end-start;
+  const dur=Math.min(520,Math.max(280,dist*0.6)); // proportional, capped
+  let startTime=null;
+  function ease(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;} // easeInOutQuad
+  function step(ts){
+    if(!startTime)startTime=ts;
+    const progress=Math.min((ts-startTime)/dur,1);
+    el.scrollTop=start+dist*ease(progress);
+    if(progress<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 function addBotMessage(text){
   const msgs=document.getElementById('chat-messages');
   const time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   const d=document.createElement('div');d.className='msg bot';
   d.innerHTML='<div class="chat-avatar" style="width:27px;height:27px;font-size:.68rem;flex-shrink:0;">🍛</div><div><div class="msg-bubble">'+text.replace(/\n/g,'<br/>')+'</div><div class="msg-time">'+time+'</div></div>';
   msgs.appendChild(d);scrollChat();chatHistory.push({role:'assistant',content:text});
+  resetMinimizeTimer();
 }
 function addUserMessage(text){
   const msgs=document.getElementById('chat-messages');
@@ -774,11 +942,11 @@ function addUserMessage(text){
 }
 function showTyping(){const msgs=document.getElementById('chat-messages');const d=document.createElement('div');d.className='msg bot';d.id='typing-indicator';d.innerHTML='<div class="chat-avatar" style="width:27px;height:27px;font-size:.68rem;flex-shrink:0;">🍛</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';msgs.appendChild(d);scrollChat();}
 function hideTyping(){const el=document.getElementById('typing-indicator');if(el)el.remove();}
-function sendQuick(msg){document.getElementById('chat-input').value=msg;sendMessage();}
+function sendQuick(msg){document.getElementById('chat-input').value=msg;sendMessage();resetMinimizeTimer();}
 
 async function sendMessage(){
   const input=document.getElementById('chat-input');const text=input.value.trim();
-  if(!text)return;input.value='';addUserMessage(text);showTyping();
+  if(!text)return;input.value='';addUserMessage(text);showTyping();resetMinimizeTimer();
   const menuSummary=Object.entries(menuData).map(([c,items])=>c+': '+items.map(i=>i.name+' ($'+i.price.toFixed(2)+')'+( i.popular?' [Popular]':'')).join(', ')).join('\n');
   const sys=`You are the warm, knowledgeable AI waiter for Bahubali Biryani House Downtown, authentic Indian restaurant in Vancouver.
 
@@ -798,22 +966,75 @@ PERSONALITY: Warm, welcoming, proud of Hyderabadi/Andhra authenticity. Use a few
   }catch(e){hideTyping();addBotMessage('Having a moment! Please call 604-569-2122 or try again. 🙏');}
 }
 
-// VOICE
+// ── VOICE — with silence detection so it waits for you to finish ──
 let recognition=null,isListening=false;
+let silenceTimer=null;
+let interimTranscript='';
+const SILENCE_MS=1800; // wait 1.8s of silence before sending
+
 function toggleVoice(){if(isListening)stopVoice();else startVoice();}
+
 function startVoice(){
   if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){showToast('Voice needs Chrome');return;}
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  recognition=new SR();recognition.lang='en-US';recognition.interimResults=false;recognition.maxAlternatives=1;
-  recognition.onresult=e=>{const t=e.results[0][0].transcript;stopVoice();document.getElementById('chat-input').value=t;sendMessage();};
-  recognition.onerror=()=>{stopVoice();showToast('Could not hear — try again!');};
-  recognition.onend=()=>{isListening=false;document.getElementById('voice-btn').classList.remove('listening');};
-  recognition.start();isListening=true;document.getElementById('voice-btn').classList.add('listening');
-}
-function stopVoice(){if(recognition){recognition.stop();recognition=null;}isListening=false;document.getElementById('voice-btn').classList.remove('listening');}
-function startVoiceChat(){switchTab('chat',document.getElementById('tab-btn-chat'));document.getElementById('tab-btn-chat').classList.add('active');startVoice();showToast('🎙️ Listening… speak now!');}
+  recognition=new SR();
+  recognition.lang='en-US';
+  recognition.continuous=true;       // don't stop after first phrase
+  recognition.interimResults=true;   // show live transcript
+  recognition.maxAlternatives=1;
 
-window.addEventListener('scroll',()=>document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>80));
+  recognition.onresult=e=>{
+    let interim='';let final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)final+=e.results[i][0].transcript;
+      else interim+=e.results[i][0].transcript;
+    }
+    if(final){interimTranscript+=final;}
+    // Show live preview in input
+    const combined=(interimTranscript+interim).trim();
+    if(combined)document.getElementById('chat-input').value=combined;
+    // Reset silence timer on every speech event
+    clearTimeout(silenceTimer);
+    silenceTimer=setTimeout(()=>{
+      const toSend=(interimTranscript+interim).trim();
+      if(toSend){stopVoice();sendMessage();}
+      else{stopVoice();}
+    }, SILENCE_MS);
+  };
+
+  recognition.onerror=e=>{
+    if(e.error!=='no-speech')showToast('Could not hear — try again!');
+    stopVoice();
+  };
+  recognition.onend=()=>{
+    // If still marked as listening, restart (handles auto-stop on some browsers)
+    if(isListening){
+      try{recognition.start();}catch(err){isListening=false;document.getElementById('voice-btn').classList.remove('listening');}
+    }
+  };
+
+  interimTranscript='';
+  document.getElementById('chat-input').value='';
+  recognition.start();
+  isListening=true;
+  document.getElementById('voice-btn').classList.add('listening');
+  showToast('🎙️ Listening… speak your full order, then pause');
+}
+
+function stopVoice(){
+  clearTimeout(silenceTimer);
+  if(recognition){try{recognition.stop();}catch(e){} recognition=null;}
+  isListening=false;
+  interimTranscript='';
+  document.getElementById('voice-btn').classList.remove('listening');
+}
+
+function startVoiceChat(){
+  switchTab('chat',document.getElementById('tab-btn-chat'));
+  document.getElementById('tab-btn-chat').classList.add('active');
+  startVoice();
+}
+
 document.getElementById('cart-modal').addEventListener('click',function(e){if(e.target===this)closeCart();});
 
 let toastTimer;
