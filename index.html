@@ -897,6 +897,7 @@ const menuData={
     {name:"Jalzeera",price:5.95,desc:"Tangy cumin spiced drink",veg:true,spice:1,img:IMG.drinks},
     {name:"Pop",price:3.95,desc:"Coke, Diet Coke, Sprite, Ginger Ale",veg:true,spice:0,img:IMG.drinks},
     {name:"Scotch",price:11.95,desc:"Scotch whisky",veg:true,spice:0,img:IMG.drinks},
+  ],
 };
 const allItems=[];const seen=new Set();
 Object.entries(menuData).forEach(([cat,items])=>items.forEach(i=>{if(!seen.has(i.name)){seen.add(i.name);allItems.push({...i,category:cat});}}));
