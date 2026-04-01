@@ -720,7 +720,6 @@ footer{background:var(--bg-dark);border-top:1px solid var(--border);padding:2.8r
   </div>
   <div class="chat-tabs">
     <button class="chat-tab active" id="tab-btn-chat" onclick="switchTab('chat',this)">💬 Chat</button>
-    <button class="chat-tab" id="tab-btn-voice" onclick="switchTab('voice',this)">🎙️ Voice</button>
     <button class="chat-tab gtab" id="tab-btn-order" onclick="switchTab('order',this)">⚡ Quick Order</button>
   </div>
   <div id="tab-chat" style="display:flex;flex-direction:column;">
@@ -734,16 +733,11 @@ footer{background:var(--bg-dark);border-top:1px solid var(--border);padding:2.8r
       <button class="quick-btn" onclick="sendQuick('How do the loyalty rewards work?')">🏆 Rewards</button>
     </div>
     <div class="chat-input-area">
-      <button id="voice-btn" onclick="toggleVoice()" title="Voice input">🎙️</button>
       <input id="chat-input" placeholder="Ask anything — menu, order, rewards…" onkeydown="if(event.key==='Enter')sendMessage()"/>
       <button id="chat-send" onclick="sendMessage()"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
     </div>
   </div>
-  <div id="tab-voice" style="display:none;padding:1.3rem;text-align:center;">
-    <div style="color:var(--text-muted);font-style:italic;margin-bottom:1.1rem;font-size:.9rem;">Speak naturally — ask about the menu, place an order, or get directions</div>
-    <button onclick="startVoiceChat()" style="background:linear-gradient(135deg,var(--saffron),var(--gold));border:none;color:#fff;padding:.95rem 1.9rem;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.09em;cursor:pointer;border-radius:50px;box-shadow:0 4px 20px rgba(232,105,26,.34);">🎙️ Start Speaking</button>
-    <div style="margin-top:.9rem;color:var(--text-muted);font-size:.8rem;">Chrome recommended · Pauses 1.8s after you stop</div>
-  </div>
+  <div id="tab-voice" style="display:none;"></div>
   <div id="tab-order" style="display:none;">
     <div style="font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.12em;color:var(--mint);margin-bottom:.52rem;text-transform:uppercase;padding:.5rem .72rem 0;">⚡ Popular &amp; All Items — Tap + to Add</div>
     <div style="padding:0 .72rem;"><div class="qsc-wrap"><span class="qsc-icon">🔍</span><input class="qsc" id="qsc" placeholder="Search menu…" oninput="filterChatOrder(this.value)"/></div></div>
@@ -757,132 +751,152 @@ footer{background:var(--bg-dark);border-top:1px solid var(--border);padding:2.8r
 // ══════════════════════════════════
 // MENU DATA
 // ══════════════════════════════════
-const SITE = 'https://bahubalibiryanihousedowntown.ca/images/';
-// Map item name keywords to image files on their server
-const itemImages = {
-  'biryani': SITE+'i-1.jpg',
-  'butter chicken': SITE+'i-2.jpg',
-  'tandoori': SITE+'i-3.jpg',
-  'default': null
+const VOICE_ENABLED = false; // Feature flag — re-enable when voice UX is polished
+
+// ─── REAL RESTAURANT IMAGES from bahubalibiryanihouse.com CDN ───
+const CDN = 'https://cdn3.didevelop.com/public/';
+const IMG = {
+  // Per-category (actual restaurant photos)
+  vegStarters:   CDN+'product_images/3305/300_Y4a6COKXuReMXFDKbfCs9of2JKd96AqYnh0ahHDr.jpg',
+  nonvegStarters:CDN+'product_images/3305/300_8jFKbNasWdTopjki9du9MXVDS6Jrwoj91NG59qRl.jpg',
+  streetFood:    CDN+'cdn/300_05ab5e7a084cd36fb50e0d6492c11e54.jpeg',
+  sizzlers:      CDN+'product_images/3305/300_yXBChGGLm9ruCbKz8kIhiPJKEO59B73SarNaISOW.jpg',
+  soup:          CDN+'cdn/300_e07cf1be6806891f71917f1893f7f134.jpg',
+  vegCurries:    CDN+'product_images/3305/300_hrEOQJRXPEk2S9X9oQtwvRFlitIM271bUlHnWuk3.jpg',
+  nonvegCurries: CDN+'cdn/300_b4992dfd999f6a4c328c9909bf260e87.jpg',
+  goatCurries:   CDN+'product_images/3305/300_ZDRrSc70vIfpqdRKOBtY0408VGKLvKbPjVlCKlej.jpg',
+  vegBiryani:    CDN+'cdn/300_9e165eb06ce5a2c14597d76db215824e.jpg',
+  nonvegBiryani: CDN+'product_images/3305/300_qd4aVDyN320Goub1joGAPB4n3ExuAPcbHRckMo5k.jpg',
+  indoChinese:   CDN+'cdn/300_ef5fd95039adc4551b10607744cb3a3a.jpg',
+  rice:          CDN+'cdn/300_cbdc8ec165951d38e2e1c1849751655b.jpg',
+  breads:        CDN+'product_images/3305/300_oXYVONKyKLkRnWq1g34fUMidVuxowgNze20t0lSU.jpg',
+  sideOrders:    CDN+'product_images/3305/300_5dWX5yUMx3Dm0HZaconH1gAGmZMu57EIvhPZ6diC.jpg',
+  desserts:      CDN+'cdn/300_7f56334aac74071d83029abb598bd98f.jpeg',
+  drinks:        CDN+'cdn/300_08d15f990b1d26df00d16f32b6d7a481.jpg',
+  // Individual dish images (best sellers from ordering site)
+  butterChicken: CDN+'cdn/180_b4992dfd999f6a4c328c9909bf260e87.jpg',
+  chickManchur:  CDN+'cdn/180_3bccbdfc7fbadecf76702c2dc0abed08.jpg',
+  naan:          CDN+'cdn/180_f2643dc7df8fb0e4ba9e94bf91b524ea.jpg',
+  methiChicken:  CDN+'cdn/180_a83458409b791cb904e45b6758bf91e9.jpg',
+  kadaiChicken:  CDN+'cdn/180_c1087ad8ed26e5716dc4776c0059727c.jpg',
 };
 
 const menuData={
   "Veg Starters":[
-    {name:"Crispy Corn",price:14.95,desc:"Corn kernels marinated and deep fried",veg:true,spice:2,emoji:"🌽"},
-    {name:"Paneer Chatpata Dry",price:14.95,desc:"Marinated Paneer deep fried with hot chilli powder",veg:true,spice:3,emoji:"🧀"},
-    {name:"Gobi Manchurian",price:14.95,desc:"Deep fried cauliflower balls in spiced Manchurian sauce",veg:true,spice:2,emoji:"🥦"},
-    {name:"Paneer Majestic",price:14.95,desc:"Tender fried paneer in spiced yogurt sauce with curry leaves",veg:true,spice:2,emoji:"🧀"},
-    {name:"Chilli Paneer",price:14.95,desc:"Wok tossed paneer with chilli, onion and bell peppers",veg:true,spice:3,emoji:"🌶️"},
+    {name:"Crispy Corn",price:14.95,desc:"Corn kernels marinated and deep fried",veg:true,spice:2,img:IMG.vegStarters},
+    {name:"Paneer Chatpata Dry",price:14.95,desc:"Marinated Paneer deep fried with hot chilli powder",veg:true,spice:3,img:IMG.vegStarters},
+    {name:"Gobi Manchurian",price:14.95,desc:"Deep fried cauliflower balls in spiced Manchurian sauce",veg:true,spice:2,img:IMG.vegStarters},
+    {name:"Paneer Majestic",price:14.95,desc:"Tender fried paneer in spiced yogurt sauce with curry leaves",veg:true,spice:2,img:IMG.vegStarters},
+    {name:"Chilli Paneer",price:14.95,desc:"Wok tossed paneer with chilli, onion and bell peppers",veg:true,spice:3,img:IMG.vegStarters},
   ],
   "Non-Veg Starters":[
-    {name:"Chicken Majestic",price:15.95,desc:"Chicken cubes deep fried in spicy yogurt sauce with curry leaves",veg:false,spice:2,emoji:"🍗"},
-    {name:"Fish Pakora",price:15.95,desc:"Marinated fish deep fried with hot chilli",veg:false,spice:2,emoji:"🐟"},
-    {name:"Chicken Lollipop",price:15.95,desc:"Chicken drumsticks marinated with house special sauces",veg:false,spice:2,emoji:"🍗"},
-    {name:"Chilli Chicken",price:15.95,desc:"Wok tossed deep-fried chicken in tangy chilli sauce",veg:false,spice:3,emoji:"🌶️"},
-    {name:"Chicken 65 Semi Dry",price:15.95,desc:"Tender fried chicken in spiced yogurt sauce with curry leaves",veg:false,spice:3,popular:true,emoji:"🍗"},
-    {name:"Apollo Fish",price:15.95,desc:"Crispy fish tossed in tangy sauce",veg:false,spice:2,emoji:"🐠"},
-    {name:"Chicken Manchurian",price:15.95,desc:"Chicken cubes deep fried in Manchurian sauce",veg:false,spice:2,emoji:"🍗"},
-    {name:"Cilantro Chicken",price:15.95,desc:"Chicken tossed with cilantro sauce and spices",veg:false,spice:2,emoji:"🌿"},
+    {name:"Chicken Majestic",price:15.95,desc:"Chicken cubes deep fried in spicy yogurt sauce with curry leaves",veg:false,spice:2,img:IMG.nonvegStarters},
+    {name:"Fish Pakora",price:15.95,desc:"Marinated fish deep fried with hot chilli",veg:false,spice:2,img:IMG.nonvegStarters},
+    {name:"Chicken Lollipop",price:15.95,desc:"Chicken drumsticks marinated with house special sauces",veg:false,spice:2,img:IMG.nonvegStarters},
+    {name:"Chilli Chicken",price:15.95,desc:"Wok tossed deep-fried chicken in tangy chilli sauce",veg:false,spice:3,img:IMG.nonvegStarters},
+    {name:"Chicken 65 Semi Dry",price:15.95,desc:"Tender fried chicken in spiced yogurt sauce with curry leaves",veg:false,spice:3,popular:true,img:IMG.nonvegStarters},
+    {name:"Apollo Fish",price:15.95,desc:"Crispy fish tossed in tangy sauce",veg:false,spice:2,img:IMG.nonvegStarters},
+    {name:"Chicken Manchurian",price:15.95,desc:"Chicken cubes deep fried in Manchurian sauce",veg:false,spice:2,img:IMG.chickManchur},
+    {name:"Cilantro Chicken",price:15.95,desc:"Chicken tossed with cilantro sauce and spices",veg:false,spice:2,img:IMG.methiChicken},
   ],
   "Street Food":[
-    {name:"Papdi Chaat",price:13.95,desc:"Indian wafers with chickpea, potato, mint yogurt and tamarind",veg:true,spice:1,emoji:"🫓"},
-    {name:"Pani Puri (6 pcs)",price:10.95,desc:"Indian wafers with masala water",veg:true,spice:2,emoji:"🫙"},
-    {name:"Pani Puri (12 pcs)",price:13.95,desc:"Indian wafers with masala water — double portion",veg:true,spice:2,emoji:"🫙"},
-    {name:"Baby Corn Masala",price:13.95,desc:"Corn kernels battered, deep fried, garnished with cilantro",veg:true,spice:2,emoji:"🌽"},
-    {name:"Peanut Masala",price:13.95,desc:"Peanuts deep fried with onions, tomatoes and chaat masala",veg:true,spice:1,emoji:"🥜"},
+    {name:"Papdi Chaat",price:13.95,desc:"Indian wafers with chickpea, potato, mint yogurt and tamarind",veg:true,spice:1,img:IMG.streetFood},
+    {name:"Pani Puri (6 pcs)",price:10.95,desc:"Indian wafers with masala water",veg:true,spice:2,img:IMG.streetFood},
+    {name:"Pani Puri (12 pcs)",price:13.95,desc:"Indian wafers with masala water — double portion",veg:true,spice:2,img:IMG.streetFood},
+    {name:"Baby Corn Masala",price:13.95,desc:"Corn kernels battered, deep fried, garnished with cilantro",veg:true,spice:2,img:IMG.streetFood},
+    {name:"Peanut Masala",price:13.95,desc:"Peanuts deep fried with onions, tomatoes and chaat masala",veg:true,spice:1,img:IMG.streetFood},
   ],
   "Sizzlers & Tandoor":[
-    {name:"Mixed Tandoori Platter",price:20.95,desc:"Assorted meats cooked in tandoor with special spices",veg:false,spice:2,popular:true,img:SITE+'i-3.jpg',emoji:"🔥"},
-    {name:"Chicken Seekh Kebab",price:20.95,desc:"Fine grounded chicken on skewers cooked in tandoor",veg:false,spice:2,emoji:"🍢"},
-    {name:"Murgh Malai Tikka",price:20.95,desc:"Boneless chicken in yoghurt and spices cooked in tandoor",veg:false,spice:1,popular:true,emoji:"🍗"},
-    {name:"Tandoori Prawns",price:20.95,desc:"Prawns marinated overnight cooked in tandoor",veg:false,spice:2,emoji:"🦐"},
-    {name:"Paneer Tikka",price:19.95,desc:"Marinated paneer cubes cooked in tandoor",veg:true,spice:2,emoji:"🧀"},
-    {name:"Tangdi Kabab",price:19.95,desc:"Marinated leg and thigh cooked in tandoor",veg:false,spice:2,emoji:"🍗"},
-    {name:"Pudina Chicken Tikka",price:19.95,desc:"Boneless chicken cooked in tandoor with mint sauce",veg:false,spice:2,emoji:"🌿"},
-    {name:"Masala Tandoori Eggs",price:18.95,desc:"Spiced eggs cooked tandoor style",veg:false,spice:2,emoji:"🥚"},
-    {name:"Pomfret Fry",price:20.95,desc:"Full pomfret fish marinated overnight cooked in tandoor",veg:false,spice:2,emoji:"🐟"},
+    {name:"Mixed Tandoori Platter",price:20.95,desc:"Assorted meats cooked in tandoor with special spices",veg:false,spice:2,popular:true,img:IMG.sizzlers},
+    {name:"Chicken Seekh Kebab",price:20.95,desc:"Fine grounded chicken on skewers cooked in tandoor",veg:false,spice:2,img:IMG.sizzlers},
+    {name:"Murgh Malai Tikka",price:20.95,desc:"Boneless chicken in yoghurt and spices cooked in tandoor",veg:false,spice:1,popular:true,img:IMG.sizzlers},
+    {name:"Tandoori Prawns",price:20.95,desc:"Prawns marinated overnight cooked in tandoor",veg:false,spice:2,img:IMG.sizzlers},
+    {name:"Paneer Tikka",price:19.95,desc:"Marinated paneer cubes cooked in tandoor",veg:true,spice:2,img:IMG.sizzlers},
+    {name:"Tangdi Kabab",price:19.95,desc:"Marinated leg and thigh cooked in tandoor",veg:false,spice:2,img:IMG.sizzlers},
+    {name:"Pudina Chicken Tikka",price:19.95,desc:"Boneless chicken cooked in tandoor with mint sauce",veg:false,spice:2,img:IMG.sizzlers},
+    {name:"Masala Tandoori Eggs",price:18.95,desc:"Spiced eggs cooked tandoor style",veg:false,spice:2,img:IMG.sizzlers},
+    {name:"Pomfret Fry",price:20.95,desc:"Full pomfret fish marinated overnight cooked in tandoor",veg:false,spice:2,img:IMG.sizzlers},
   ],
   "Soups":[
-    {name:"Goat Paya Soup",price:11.95,desc:"Traditional Hyderabadi soup with goat bones and spices",veg:false,spice:2,emoji:"🍲"},
-    {name:"Hot & Sour Veg Soup",price:10.95,desc:"Spicy and tangy soup with vegetables",veg:true,spice:2,emoji:"🍜"},
-    {name:"Hot & Sour Chicken Soup",price:11.95,desc:"Spicy tangy soup with sesame and chilli topped with chicken",veg:false,spice:2,emoji:"🍜"},
-    {name:"Tomato Soup",price:10.95,desc:"Thickened puree of tomato with croutons and fresh cream",veg:true,spice:1,emoji:"🍅"},
+    {name:"Goat Paya Soup",price:11.95,desc:"Traditional Hyderabadi soup with goat bones and spices",veg:false,spice:2,img:IMG.soup},
+    {name:"Hot & Sour Veg Soup",price:10.95,desc:"Spicy and tangy soup with vegetables",veg:true,spice:2,img:IMG.soup},
+    {name:"Hot & Sour Chicken Soup",price:11.95,desc:"Spicy tangy soup with sesame and chilli topped with chicken",veg:false,spice:2,img:IMG.soup},
+    {name:"Tomato Soup",price:10.95,desc:"Thickened puree of tomato with croutons and fresh cream",veg:true,spice:1,img:IMG.soup},
   ],
   "Veg Curries":[
-    {name:"Saag Paneer",price:17.95,desc:"Paneer cooked with pureed spinach",veg:true,spice:2,emoji:"🌿"},
-    {name:"Paneer Butter Masala",price:17.95,desc:"Paneer in rich tomato onion gravy",veg:true,spice:1,popular:true,emoji:"🧀"},
-    {name:"Spinach Dal Tadka",price:17.95,desc:"Yellow lentils with spinach, cumin and garlic",veg:true,spice:1,emoji:"🫘"},
-    {name:"Kadai Paneer",price:17.95,desc:"Paneer with rich onion gravy and bell peppers",veg:true,spice:2,emoji:"🫑"},
-    {name:"Guthi Vankay",price:17.95,desc:"Baby eggplant in salan gravy with peanuts and cashews",veg:true,spice:2,emoji:"🍆"},
-    {name:"Chana Masala",price:17.95,desc:"Chickpeas cooked with fresh onions, ginger and spices",veg:true,spice:2,emoji:"🫘"},
+    {name:"Saag Paneer",price:17.95,desc:"Paneer cooked with pureed spinach",veg:true,spice:2,img:IMG.vegCurries},
+    {name:"Paneer Butter Masala",price:17.95,desc:"Paneer in rich tomato onion gravy",veg:true,spice:1,popular:true,img:IMG.vegCurries},
+    {name:"Spinach Dal Tadka",price:17.95,desc:"Yellow lentils with spinach, cumin and garlic",veg:true,spice:1,img:IMG.vegCurries},
+    {name:"Kadai Paneer",price:17.95,desc:"Paneer with rich onion gravy and bell peppers",veg:true,spice:2,img:IMG.vegCurries},
+    {name:"Guthi Vankay",price:17.95,desc:"Baby eggplant in salan gravy with peanuts and cashews",veg:true,spice:2,img:IMG.vegCurries},
+    {name:"Chana Masala",price:17.95,desc:"Chickpeas cooked with fresh onions, ginger and spices",veg:true,spice:2,img:IMG.vegCurries},
   ],
   "Non-Veg Curries":[
-    {name:"Butter Chicken Dhaba Style",price:18.95,desc:"Boneless chicken in rich butter sauce with cashew nuts",veg:false,spice:1,popular:true,img:SITE+'i-2.jpg',emoji:"🍗"},
-    {name:"Chicken Madras",price:18.95,desc:"Chicken in house special Madras spices and coconut milk",veg:false,spice:3,emoji:"🥥"},
-    {name:"Gongura Chicken",price:18.95,desc:"Chicken cooked in red sorrel leaves — unique Andhra tang",veg:false,spice:3,popular:true,emoji:"🌿"},
-    {name:"Egg 65 Biryani",price:18.95,desc:"Spiced eggs in biryani style",veg:false,spice:2,emoji:"🥚"},
+    {name:"Butter Chicken Dhaba Style",price:18.95,desc:"Boneless chicken in rich butter sauce with cashew nuts",veg:false,spice:1,popular:true,img:IMG.butterChicken},
+    {name:"Chicken Madras",price:18.95,desc:"Chicken in house special Madras spices and coconut milk",veg:false,spice:3,img:IMG.nonvegCurries},
+    {name:"Gongura Chicken",price:18.95,desc:"Chicken cooked in red sorrel leaves — unique Andhra tang",veg:false,spice:3,popular:true,img:IMG.nonvegCurries},
+    {name:"Egg 65 Biryani",price:18.95,desc:"Spiced eggs in biryani style",veg:false,spice:2,img:IMG.nonvegCurries},
   ],
   "Goat Curries":[
-    {name:"Mutton Maratha",price:19.95,desc:"Fresh goat cooked with coconut and spices",veg:false,spice:2,emoji:"🍖"},
-    {name:"Kadai Goat",price:19.95,desc:"Goat with bell peppers in rich onion and tomato gravy",veg:false,spice:2,emoji:"🍖"},
-    {name:"Goat Curry",price:19.95,desc:"Bone-in fresh goat slow cooked with traditional spices",veg:false,spice:2,emoji:"🍖"},
-    {name:"Goat Black Pepper Fry",price:19.95,desc:"Goat cooked with fresh ground black pepper",veg:false,spice:3,emoji:"🌑"},
-    {name:"Gongura Mutton",price:19.95,desc:"Fresh goat in red sorrel leaves — tangy Andhra flavour",veg:false,spice:3,emoji:"🌿"},
+    {name:"Mutton Maratha",price:19.95,desc:"Fresh goat cooked with coconut and spices",veg:false,spice:2,img:IMG.goatCurries},
+    {name:"Kadai Goat",price:19.95,desc:"Goat with bell peppers in rich onion and tomato gravy",veg:false,spice:2,img:IMG.goatCurries},
+    {name:"Goat Curry",price:19.95,desc:"Bone-in fresh goat slow cooked with traditional spices",veg:false,spice:2,img:IMG.goatCurries},
+    {name:"Goat Black Pepper Fry",price:19.95,desc:"Goat cooked with fresh ground black pepper",veg:false,spice:3,img:IMG.goatCurries},
+    {name:"Gongura Mutton",price:19.95,desc:"Fresh goat in red sorrel leaves — tangy Andhra flavour",veg:false,spice:3,img:IMG.goatCurries},
   ],
   "Veg Biryanis":[
-    {name:"Veg Dum Biryani",price:17.95,desc:"Aromatic vegetable dum biryani with Raita and Salan",veg:true,spice:2,img:SITE+'i-1.jpg',emoji:"🍚"},
-    {name:"Paneer 65 Biryani",price:17.95,desc:"Paneer 65 dum biryani with Raita and Salan",veg:true,spice:2,popular:true,img:SITE+'i-1.jpg',emoji:"🍚"},
-    {name:"Veg Biryani Family Pack",price:49.95,desc:"Family pack for 4 with Raita and Salan",veg:true,spice:2,emoji:"🍚"},
-    {name:"Paneer 65 Biryani Family Pack",price:49.95,desc:"Family pack for 4 with Raita and Salan",veg:true,spice:2,emoji:"🍚"},
+    {name:"Veg Dum Biryani",price:17.95,desc:"Aromatic vegetable dum biryani with Raita and Salan",veg:true,spice:2,img:IMG.vegBiryani},
+    {name:"Paneer 65 Biryani",price:17.95,desc:"Paneer 65 dum biryani with Raita and Salan",veg:true,spice:2,popular:true,img:IMG.vegBiryani},
+    {name:"Veg Biryani Family Pack",price:49.95,desc:"Family pack for 4 with Raita and Salan",veg:true,spice:2,img:IMG.vegBiryani},
+    {name:"Paneer 65 Biryani Family Pack",price:49.95,desc:"Family pack for 4 with Raita and Salan",veg:true,spice:2,img:IMG.vegBiryani},
   ],
   "Non-Veg Biryanis":[
-    {name:"Chicken Dum Biryani",price:18.95,desc:"Classic Hyderabadi chicken dum biryani with Raita and Salan",veg:false,spice:2,popular:true,img:SITE+'i-1.jpg',emoji:"🍛"},
-    {name:"Vijayawada Fry Piece Chicken Biryani",price:19.95,desc:"Fry piece biryani with Raita and Salan",veg:false,spice:3,popular:true,img:SITE+'i-1.jpg',emoji:"🍛"},
-    {name:"Gongura Chicken Biryani",price:20.95,desc:"Biryani with Gongura chicken",veg:false,spice:3,emoji:"🍛"},
-    {name:"Ulavacharu Chicken Biryani",price:20.95,desc:"Biryani with Ulavacharu horse gram sauce",veg:false,spice:2,emoji:"🍛"},
-    {name:"Hyderabad Goat Biryani",price:20.95,desc:"Authentic Hyderabadi Goat Biryani with Raita and Salan",veg:false,spice:2,popular:true,img:SITE+'i-1.jpg',emoji:"🍛"},
-    {name:"Gongura Mutton Biryani",price:20.95,desc:"Biryani with Gongura mutton",veg:false,spice:3,emoji:"🍛"},
-    {name:"Chicken Dum Biryani Family Pack",price:54.95,desc:"Family pack for 4 with Raita and Salan",veg:false,spice:2,emoji:"🍛"},
-    {name:"Vijayawada Fry Piece Family Pack",price:54.95,desc:"Family pack for 4 with Raita and Salan",veg:false,spice:3,emoji:"🍛"},
-    {name:"Hyderabad Goat Biryani Family Pack",price:60.95,desc:"Family pack with Raita and Salan",veg:false,spice:2,emoji:"🍛"},
+    {name:"Chicken Dum Biryani",price:18.95,desc:"Classic Hyderabadi chicken dum biryani with Raita and Salan",veg:false,spice:2,popular:true,img:IMG.nonvegBiryani},
+    {name:"Vijayawada Fry Piece Chicken Biryani",price:19.95,desc:"Fry piece biryani with Raita and Salan",veg:false,spice:3,popular:true,img:IMG.nonvegBiryani},
+    {name:"Gongura Chicken Biryani",price:20.95,desc:"Biryani with Gongura chicken",veg:false,spice:3,img:IMG.nonvegBiryani},
+    {name:"Ulavacharu Chicken Biryani",price:20.95,desc:"Biryani with Ulavacharu horse gram sauce",veg:false,spice:2,img:IMG.nonvegBiryani},
+    {name:"Hyderabad Goat Biryani",price:20.95,desc:"Authentic Hyderabadi Goat Biryani with Raita and Salan",veg:false,spice:2,popular:true,img:IMG.nonvegBiryani},
+    {name:"Gongura Mutton Biryani",price:20.95,desc:"Biryani with Gongura mutton",veg:false,spice:3,img:IMG.nonvegBiryani},
+    {name:"Chicken Dum Biryani Family Pack",price:54.95,desc:"Family pack for 4 with Raita and Salan",veg:false,spice:2,img:IMG.nonvegBiryani},
+    {name:"Vijayawada Fry Piece Family Pack",price:54.95,desc:"Family pack for 4 with Raita and Salan",veg:false,spice:3,img:IMG.nonvegBiryani},
+    {name:"Hyderabad Goat Biryani Family Pack",price:60.95,desc:"Family pack with Raita and Salan",veg:false,spice:2,img:IMG.nonvegBiryani},
   ],
   "Indo-Chinese":[
-    {name:"Schezuan Chicken Noodles",price:18.95,desc:"Spicy Schezuan style chicken noodles",veg:false,spice:3,emoji:"🍜"},
-    {name:"Veg Hakka Noodles",price:17.95,desc:"Classic Hakka noodles with vegetables",veg:true,spice:1,emoji:"🍜"},
-    {name:"Schezuan Chicken Fried Rice",price:18.95,desc:"Spicy Schezuan chicken fried rice",veg:false,spice:3,emoji:"🍳"},
-    {name:"Vegetable Fried Rice",price:17.95,desc:"Wok tossed rice with fresh vegetables",veg:true,spice:1,emoji:"🍳"},
+    {name:"Schezuan Chicken Noodles",price:18.95,desc:"Spicy Schezuan style chicken noodles",veg:false,spice:3,img:IMG.indoChinese},
+    {name:"Veg Hakka Noodles",price:17.95,desc:"Classic Hakka noodles with vegetables",veg:true,spice:1,img:IMG.indoChinese},
+    {name:"Schezuan Chicken Fried Rice",price:18.95,desc:"Spicy Schezuan chicken fried rice",veg:false,spice:3,img:IMG.indoChinese},
+    {name:"Vegetable Fried Rice",price:17.95,desc:"Wok tossed rice with fresh vegetables",veg:true,spice:1,img:IMG.indoChinese},
   ],
   "Breads":[
-    {name:"Tandoori Butter Naan",price:3.50,desc:"Soft leavened bread baked in tandoor, buttered",veg:true,spice:0,emoji:"🫓"},
-    {name:"Garlic Naan",price:3.95,desc:"Naan bread with garlic and herbs",veg:true,spice:0,emoji:"🧄"},
-    {name:"Roti",price:3.95,desc:"Whole wheat flatbread",veg:true,spice:0,emoji:"🫓"},
-    {name:"Paratha",price:4.50,desc:"Layered whole wheat flatbread",veg:true,spice:0,emoji:"🫓"},
-    {name:"Spinach Paratha",price:5.95,desc:"Layered flatbread with spinach",veg:true,spice:0,emoji:"🌿"},
-    {name:"Aloo Paratha",price:5.95,desc:"Flatbread stuffed with spiced potatoes",veg:true,spice:1,emoji:"🥔"},
-    {name:"Rumali Roti",price:5.95,desc:"Paper-thin handkerchief bread",veg:true,spice:0,emoji:"🫓"},
+    {name:"Tandoori Butter Naan",price:3.50,desc:"Soft leavened bread baked in tandoor, buttered",veg:true,spice:0,img:IMG.naan},
+    {name:"Garlic Naan",price:3.95,desc:"Naan bread with garlic and herbs",veg:true,spice:0,img:IMG.breads},
+    {name:"Roti",price:3.95,desc:"Whole wheat flatbread",veg:true,spice:0,img:IMG.breads},
+    {name:"Paratha",price:4.50,desc:"Layered whole wheat flatbread",veg:true,spice:0,img:IMG.breads},
+    {name:"Spinach Paratha",price:5.95,desc:"Layered flatbread with spinach",veg:true,spice:0,img:IMG.breads},
+    {name:"Aloo Paratha",price:5.95,desc:"Flatbread stuffed with spiced potatoes",veg:true,spice:1,img:IMG.breads},
+    {name:"Rumali Roti",price:5.95,desc:"Paper-thin handkerchief bread",veg:true,spice:0,img:IMG.breads},
   ],
   "Rice & Sides":[
-    {name:"Basmati Rice",price:3.50,desc:"Plain steamed basmati rice",veg:true,spice:0,emoji:"🍚"},
-    {name:"Zeera Rice",price:5.50,desc:"Basmati rice with cumin",veg:true,spice:0,emoji:"🍚"},
-    {name:"Coconut Rice",price:5.50,desc:"Fragrant coconut rice",veg:true,spice:0,emoji:"🥥"},
-    {name:"Dum Rice",price:9.95,desc:"Aromatic dum-style rice",veg:true,spice:1,emoji:"🍚"},
-    {name:"Raita",price:4.95,desc:"Cooling yogurt dip",veg:true,spice:0,emoji:"🥛"},
-    {name:"Mint Sauce",price:2.95,desc:"Fresh mint chutney",veg:true,spice:1,emoji:"🌿"},
-    {name:"Pickle",price:4.95,desc:"House Indian pickle",veg:true,spice:2,emoji:"🫙"},
+    {name:"Basmati Rice",price:3.50,desc:"Plain steamed basmati rice",veg:true,spice:0,img:IMG.rice},
+    {name:"Zeera Rice",price:5.50,desc:"Basmati rice with cumin",veg:true,spice:0,img:IMG.rice},
+    {name:"Coconut Rice",price:5.50,desc:"Fragrant coconut rice",veg:true,spice:0,img:IMG.rice},
+    {name:"Dum Rice",price:9.95,desc:"Aromatic dum-style rice",veg:true,spice:1,img:IMG.rice},
+    {name:"Raita",price:4.95,desc:"Cooling yogurt dip",veg:true,spice:0,img:IMG.sideOrders},
+    {name:"Mint Sauce",price:2.95,desc:"Fresh mint chutney",veg:true,spice:1,img:IMG.sideOrders},
+    {name:"Pickle",price:4.95,desc:"House Indian pickle",veg:true,spice:2,img:IMG.sideOrders},
   ],
   "Desserts":[
-    {name:"Double Ka Meetha",price:9.95,desc:"Hyderabadi bread pudding with condensed milk and nuts",veg:true,spice:0,emoji:"🍮"},
-    {name:"Khadoo Ka Kheer",price:9.95,desc:"Bottle gourd rice pudding with cardamom and saffron",veg:true,spice:0,emoji:"🍚"},
-    {name:"Custard Fruit Salad",price:9.95,desc:"Fresh fruits tossed in creamy custard",veg:true,spice:0,emoji:"🍨"},
+    {name:"Double Ka Meetha",price:9.95,desc:"Hyderabadi bread pudding with condensed milk and nuts",veg:true,spice:0,img:IMG.desserts},
+    {name:"Khadoo Ka Kheer",price:9.95,desc:"Bottle gourd rice pudding with cardamom and saffron",veg:true,spice:0,img:IMG.desserts},
+    {name:"Custard Fruit Salad",price:9.95,desc:"Fresh fruits tossed in creamy custard",veg:true,spice:0,img:IMG.desserts},
   ],
   "Drinks":[
-    {name:"Mango Lassi",price:6.95,desc:"Thick creamy mango yogurt drink",veg:true,spice:0,emoji:"🥭"},
-    {name:"Strawberry Shake",price:6.95,desc:"Creamy strawberry milkshake",veg:true,spice:0,emoji:"🍓"},
-    {name:"Chai",price:5.95,desc:"Spiced Indian tea",veg:true,spice:0,emoji:"☕"},
-    {name:"Jalzeera",price:5.95,desc:"Tangy cumin spiced drink",veg:true,spice:1,emoji:"🫙"},
-    {name:"Pop",price:3.95,desc:"Coke, Diet Coke, Sprite, Ginger Ale",veg:true,spice:0,emoji:"🥤"},
-    {name:"Scotch",price:11.95,desc:"Scotch whisky",veg:true,spice:0,emoji:"🥃"},
-  ],
+    {name:"Mango Lassi",price:6.95,desc:"Thick creamy mango yogurt drink",veg:true,spice:0,img:IMG.drinks},
+    {name:"Strawberry Shake",price:6.95,desc:"Creamy strawberry milkshake",veg:true,spice:0,img:IMG.drinks},
+    {name:"Chai",price:5.95,desc:"Spiced Indian tea",veg:true,spice:0,img:IMG.drinks},
+    {name:"Jalzeera",price:5.95,desc:"Tangy cumin spiced drink",veg:true,spice:1,img:IMG.drinks},
+    {name:"Pop",price:3.95,desc:"Coke, Diet Coke, Sprite, Ginger Ale",veg:true,spice:0,img:IMG.drinks},
+    {name:"Scotch",price:11.95,desc:"Scotch whisky",veg:true,spice:0,img:IMG.drinks},
 };
 const allItems=[];const seen=new Set();
 Object.entries(menuData).forEach(([cat,items])=>items.forEach(i=>{if(!seen.has(i.name)){seen.add(i.name);allItems.push({...i,category:cat});}}));
@@ -1323,30 +1337,16 @@ PERSONALITY: Warm, proud of Hyderabadi/Andhra authenticity. Use Hindi/Telugu nat
 let recognition=null,isListening=false,silenceTimer=null,interimTranscript='';
 const SILENCE_MS=1800;
 function toggleVoice(){if(isListening)stopVoice();else startVoice();}
-function startVoice(){
-  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){showToast('Voice needs Chrome');return;}
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  recognition=new SR();recognition.lang='en-US';recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=1;
-  recognition.onresult=e=>{
-    let interim='',final='';
-    for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript;else interim+=e.results[i][0].transcript;}
-    if(final)interimTranscript+=final;
-    const combined=(interimTranscript+interim).trim();
-    if(combined)document.getElementById('chat-input').value=combined;
-    clearTimeout(silenceTimer);
-    silenceTimer=setTimeout(()=>{const toSend=(interimTranscript+interim).trim();if(toSend){stopVoice();sendMessage();}else stopVoice();},SILENCE_MS);
-  };
-  recognition.onerror=e=>{if(e.error!=='no-speech')showToast('Could not hear — try again!');stopVoice();};
-  recognition.onend=()=>{if(isListening){try{recognition.start();}catch(err){isListening=false;document.getElementById('voice-btn').classList.remove('listening');}}};
-  interimTranscript='';document.getElementById('chat-input').value='';
-  recognition.start();isListening=true;document.getElementById('voice-btn').classList.add('listening');
-  showToast('🎙️ Listening… speak, then pause 2s to send');
-}
-function stopVoice(){clearTimeout(silenceTimer);if(recognition){try{recognition.stop();}catch(e){}recognition=null;}isListening=false;interimTranscript='';document.getElementById('voice-btn').classList.remove('listening');}
-function startVoiceChat(){switchTab('chat',document.getElementById('tab-btn-chat'));document.getElementById('tab-btn-chat').classList.add('active');startVoice();}
+// ── VOICE — behind feature flag ──
+let recognition=null,isListening=false,silenceTimer=null,interimTranscript='';
+const SILENCE_MS=1800;
+function toggleVoice(){if(!VOICE_ENABLED){showToast('🎙️ Voice coming soon — type your message for now!');return;}if(isListening)stopVoice();else startVoice();}
+function startVoice(){if(!VOICE_ENABLED)return;}
+function stopVoice(){clearTimeout(silenceTimer);if(recognition){try{recognition.stop();}catch(e){}recognition=null;}isListening=false;interimTranscript='';const vb=document.getElementById('voice-btn');if(vb)vb.classList.remove('listening');}
+function startVoiceChat(){if(!VOICE_ENABLED){showToast('🎙️ Voice feature coming soon!');return;}}
 
 document.getElementById('cart-modal').addEventListener('click',function(e){if(e.target===this)closeCart();});
-document.getElementById('customizer-modal').addEventListener('click',function(e){if(e.target===this)closeCustomizer();});
+const custModal=document.getElementById('customize-modal');if(custModal)custModal.addEventListener('click',function(e){if(e.target===this)closeCustomize();});
 
 let toastTimer;
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800);}
